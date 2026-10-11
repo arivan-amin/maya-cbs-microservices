@@ -3,6 +3,7 @@ package com.maya.cbs.ledger.domain.journal;
 import com.maya.cbs.ledger.domain.base.Money;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -12,19 +13,22 @@ import static java.util.Objects.requireNonNull;
 public class LedgerEntry {
 
     UUID id;
+    UUID transactionId;
     UUID accountId;
-    Money money;
     EntryDirection direction;
+    Money amount;
+    Instant createdAt;
 
-    public LedgerEntry (UUID accountId, Money money, EntryDirection direction) {
+    public LedgerEntry (UUID accountId, Money amount, EntryDirection direction) {
+        requireNonNull(transactionId, "transactionId");
         requireNonNull(accountId, "accountId");
-        requireNonNull(money, "money");
+        requireNonNull(amount, "money");
         requireNonNull(direction, "direction");
-        if (!money.isPositive()) {
+        if (!amount.isPositive()) {
             throw new InvalidLedgerEntryException("Ledger entry amount must be greater than zero");
         }
         this.accountId = accountId;
-        this.money = money;
+        this.amount = amount;
         this.direction = direction;
     }
 

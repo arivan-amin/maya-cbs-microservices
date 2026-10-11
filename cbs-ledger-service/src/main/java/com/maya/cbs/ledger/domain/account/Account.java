@@ -1,6 +1,5 @@
 package com.maya.cbs.ledger.domain.account;
 
-import com.maya.cbs.ledger.domain.base.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,6 +13,5 @@ public class Account {
     private final String accountNumber;
     private final String name;
     private final AccountType type;
-    private final Currency currency;
     private final AccountStatus status;
 }
