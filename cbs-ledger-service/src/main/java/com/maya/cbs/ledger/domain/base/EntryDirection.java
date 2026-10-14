@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.journal;
+package com.maya.cbs.ledger.domain.base;
 
 public enum EntryDirection {
     DEBIT,

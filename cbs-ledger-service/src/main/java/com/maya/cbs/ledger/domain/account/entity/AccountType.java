@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.account;
+package com.maya.cbs.ledger.domain.account.entity;
 
 public enum AccountType {
     ASSET,
