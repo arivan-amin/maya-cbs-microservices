@@ -20,5 +20,6 @@ public class JournalEntry {
     private JournalStatus status;
     private String referenceId;
     private String description;
+    private UUID reversalOf;
     private List<JournalEntryLine> lines;
 }
