@@ -40,7 +40,7 @@ following on **Clean Architecture** and **SOLID** principles, DDD, built with **
   system.
 * **Clean Architecture** — domain logic isolated from frameworks, databases, messaging, and
   infrastructure.
-* **Microservices** — indep`endently deployable services with clear business boundaries.
+* **Microservices** — independently deployable services with clear business boundaries.
 * **Enterprise-Grade Design** — SOLID principles, DDD, idempotency, auditability, and consistency.
 * **Event-Driven Integration** — asynchronous communication for workflows that benefit from
   decoupling.
