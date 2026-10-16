@@ -3,6 +3,7 @@ package com.maya.cbs.ledger.domain.journal.usecase;
 import com.maya.cbs.ledger.domain.base.EntryDirection;
 import com.maya.cbs.ledger.domain.journal.entity.JournalEntry;
 import com.maya.cbs.ledger.domain.journal.entity.JournalEntryLine;
+import com.maya.cbs.ledger.domain.journal.exception.UnbalancedJournalEntryException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,7 +20,7 @@ public class DoubleEntryValidationUseCase {
         BigDecimal creditTotal = getLineTotal(lines, EntryDirection.CREDIT);
 
         if (debitTotal.compareTo(creditTotal) != 0) {
-            throw new IllegalArgumentException("Credit and debit are not balances");
+            throw new UnbalancedJournalEntryException("Credit and debit are not balances");
         }
     }
 
