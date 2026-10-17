@@ -63,4 +63,14 @@ public class Money {
         requireSameCurrency(other);
         return of(amount.subtract(other.amount), currency);
     }
+
+    public boolean isGreaterThanOrEqual (Money money) {
+        requireSameCurrency(money);
+        return amount.compareTo(money.getAmount()) >= 0;
+    }
+
+    public boolean isLessThan (Money money) {
+        requireSameCurrency(money);
+        return amount.compareTo(money.getAmount()) < 0;
+    }
 }

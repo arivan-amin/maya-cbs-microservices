@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.account.usecase.exception;
+package com.maya.cbs.ledger.domain.account.exception;
 
 public class InactiveAccountException extends RuntimeException {
 
