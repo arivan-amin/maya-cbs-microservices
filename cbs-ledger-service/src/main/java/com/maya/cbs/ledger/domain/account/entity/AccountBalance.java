@@ -12,31 +12,38 @@ import java.util.Objects;
 public class AccountBalance {
 
     private final String accountId;
-    private Money ledgerBalance;
+    private Money accountBalance;
     private Money availableBalance;
-
+    private Money overdraftLimit;
+    
     public AccountBalance (String accountId, Currency currency) {
         this.accountId = Objects.requireNonNull(accountId, "Account ID cannot be null");
-        ledgerBalance = Money.zero(currency);
+        accountBalance = Money.zero(currency);
         availableBalance = Money.zero(currency);
     }
 
     public void applyPostedMovement (Money delta, EntryDirection direction) {
         if (direction == EntryDirection.CREDIT) {
-            ledgerBalance = ledgerBalance.add(delta);
+            accountBalance = accountBalance.add(delta);
             availableBalance = availableBalance.add(delta);
         }
         else {
             validateSufficientLedger(delta);
-            ledgerBalance = ledgerBalance.subtract(delta);
+            accountBalance = accountBalance.subtract(delta);
             availableBalance = availableBalance.subtract(delta);
         }
     }
 
-    private void validateSufficientLedger (Money delta) {
-        if (ledgerBalance.isLessThan(delta)) {
-            throw new InsufficientAccountBalanceException(ledgerBalance, delta);
+    public void validateSufficientLedger (Money delta) {
+        if (!hasSufficientBalance(delta)) {
+            throw new InsufficientAccountBalanceException(accountBalance, delta);
         }
+    }
+
+    public boolean hasSufficientBalance (Money amountToCheck) {
+        Objects.requireNonNull(amountToCheck, "Amount to check cannot be null");
+        Money availableFunds = availableBalance.add(overdraftLimit);
+        return availableFunds.isGreaterThanOrEqual(amountToCheck);
     }
 
     public void placeHold (Money holdAmount) {
