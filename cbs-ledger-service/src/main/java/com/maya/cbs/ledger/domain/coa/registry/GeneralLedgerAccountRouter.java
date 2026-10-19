@@ -4,7 +4,7 @@ import com.maya.cbs.ledger.domain.coa.entity.AccountingContext;
 
 import java.util.UUID;
 
-public interface GeneralLedgerAccountRegistry {
+public interface GeneralLedgerAccountRouter {
 
     UUID resolveDebitAccount (AccountingContext context);
 

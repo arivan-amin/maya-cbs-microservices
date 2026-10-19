@@ -2,12 +2,11 @@ package com.maya.cbs.ledger.infrastructure.storage.coa;
 
 import com.maya.cbs.ledger.domain.coa.entity.AccountingContext;
 import com.maya.cbs.ledger.domain.coa.entity.GeneralLedgerMapping;
-import com.maya.cbs.ledger.domain.coa.exceptions.AccountMappingNotFoundException;
-import com.maya.cbs.ledger.domain.coa.registry.GeneralLedgerAccountRegistry;
+import com.maya.cbs.ledger.domain.coa.registry.GeneralLedgerAccountRouter;
 
 import java.util.UUID;
 
-public class DefaultGeneralLedgerAccountRegistry implements GeneralLedgerAccountRegistry {
+public class DefaultGeneralLedgerAccountRouter implements GeneralLedgerAccountRouter {
 
     @Override
     public UUID resolveDebitAccount (AccountingContext context) {
@@ -18,8 +17,7 @@ public class DefaultGeneralLedgerAccountRegistry implements GeneralLedgerAccount
     @Override
     public UUID resolveCreditAccount (AccountingContext context) {
         GeneralLedgerMapping mapping = new GeneralLedgerMapping();
-        new AccountMappingNotFoundException(context);
-
+        // new AccountMappingNotFoundException(context);
         return mapping.getCreditGeneralLedgerAccount();
     }
 }

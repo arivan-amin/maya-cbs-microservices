@@ -7,4 +7,12 @@ public enum EntryDirection {
     public EntryDirection opposite () {
         return this == DEBIT ? CREDIT : DEBIT;
     }
+
+    public boolean isDebit () {
+        return this == DEBIT;
+    }
+
+    public boolean isCredit () {
+        return this == CREDIT;
+    }
 }

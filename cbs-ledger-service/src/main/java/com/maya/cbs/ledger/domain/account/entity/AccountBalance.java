@@ -15,7 +15,7 @@ public class AccountBalance {
     private Money accountBalance;
     private Money availableBalance;
     private Money overdraftLimit;
-    
+
     public AccountBalance (String accountId, Currency currency) {
         this.accountId = Objects.requireNonNull(accountId, "Account ID cannot be null");
         accountBalance = Money.zero(currency);
