@@ -5,10 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Journal {
+@Getter
+@ToString
+@Builder
+public final class Journal {
 
     private UUID id;
     private String journalName;

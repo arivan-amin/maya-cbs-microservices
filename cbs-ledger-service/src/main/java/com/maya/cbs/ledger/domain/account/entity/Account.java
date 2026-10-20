@@ -1,12 +1,12 @@
 package com.maya.cbs.ledger.domain.account.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
-@AllArgsConstructor
+@ToString
+@Builder
 public class Account {
 
     private final UUID id;

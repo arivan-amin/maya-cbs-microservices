@@ -27,7 +27,8 @@ public class DoubleEntryValidationUseCase {
     private BigDecimal getLineTotal (List<JournalEntryLine> lines, EntryDirection debit) {
         return lines.stream()
             .filter(journalEntryLine -> journalEntryLine.getDirection() == debit)
-            .map(JournalEntryLine::getAmount)
+            .map(journalEntryLine1 -> journalEntryLine1.getMoney()
+                .getAmount())
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
