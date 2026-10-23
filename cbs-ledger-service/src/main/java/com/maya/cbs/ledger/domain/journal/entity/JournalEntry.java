@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @ToString
-@Builder
 public final class JournalEntry {
 
     private UUID id;
@@ -25,24 +25,10 @@ public final class JournalEntry {
     private UUID reversalOf;
     private List<JournalEntryLine> lines;
 
-    private JournalEntry (UUID id, UUID journalId, Instant timestamp, LocalDate postingDate,
-                          JournalStatus status, String referenceId, String description,
-                          UUID reversalOf, List<JournalEntryLine> lines) {
-        this.id = id;
-        this.journalId = journalId;
-        this.timestamp = timestamp;
-        this.postingDate = postingDate;
-        this.status = status;
-        this.referenceId = referenceId;
-        this.description = description;
-        this.reversalOf = reversalOf;
-        this.lines = lines;
-    }
-
-    public static JournalEntry newInstance (UUID id, UUID journalId, Instant timestamp,
-                                            LocalDate postingDate, JournalStatus status,
-                                            String referenceId, String description, UUID reversalOf,
-                                            List<JournalEntryLine> lines) {
+    public static JournalEntry of (UUID id, UUID journalId, Instant timestamp,
+                                   LocalDate postingDate, JournalStatus status, String referenceId,
+                                   String description, UUID reversalOf,
+                                   List<JournalEntryLine> lines) {
         validate(lines);
         return new JournalEntry(id, journalId, timestamp, postingDate, status, referenceId,
             description, reversalOf, lines);

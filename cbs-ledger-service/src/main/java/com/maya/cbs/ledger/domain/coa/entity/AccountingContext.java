@@ -11,4 +11,5 @@ public class AccountingContext {
     FinancialMovementType type;
     Currency currency;
     CustomerSegment customerSegment;
+    Channel channel;
 }

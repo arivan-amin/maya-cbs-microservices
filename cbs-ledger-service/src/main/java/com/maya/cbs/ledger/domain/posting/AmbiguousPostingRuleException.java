@@ -1,0 +1,12 @@
+package com.maya.cbs.ledger.domain.posting;
+
+import com.maya.cbs.ledger.domain.coa.entity.AccountingContext;
+
+import java.util.List;
+
+public class AmbiguousPostingRuleException extends RuntimeException {
+
+    public AmbiguousPostingRuleException (AccountingContext context, List<PostingRule> top) {
+        super("ambiguous posting rule for %s, and the list rule: %s".formatted(context, top));
+    }
+}
