@@ -1,11 +1,11 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.account.entity;
 
 import lombok.Value;
 
 import java.util.UUID;
 
 @Value
-public class BoundAccount implements LegAccountSource {
+public class BoundAccount implements AccountSource {
 
     AccountRole role;
 

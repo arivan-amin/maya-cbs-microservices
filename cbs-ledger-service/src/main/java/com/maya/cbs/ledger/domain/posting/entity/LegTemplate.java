@@ -1,5 +1,7 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
+import com.maya.cbs.ledger.domain.account.entity.AccountBindings;
+import com.maya.cbs.ledger.domain.account.entity.AccountSource;
 import com.maya.cbs.ledger.domain.base.EntryDirection;
 import com.maya.cbs.ledger.domain.base.Money;
 import lombok.Value;
@@ -9,13 +11,13 @@ public class LegTemplate {
 
     EntryDirection direction;
     AmountComponent amountComponent;
-    LegAccountSource accountSource;
+    AccountSource accountSource;
 
-    public static LegTemplate debit (AmountComponent component, LegAccountSource source) {
+    public static LegTemplate debit (AmountComponent component, AccountSource source) {
         return new LegTemplate(EntryDirection.DEBIT, component, source);
     }
 
-    public static LegTemplate credit (AmountComponent component, LegAccountSource source) {
+    public static LegTemplate credit (AmountComponent component, AccountSource source) {
         return new LegTemplate(EntryDirection.CREDIT, component, source);
     }
 

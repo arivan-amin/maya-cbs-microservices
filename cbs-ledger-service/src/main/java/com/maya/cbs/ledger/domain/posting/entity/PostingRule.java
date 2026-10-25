@@ -1,34 +1,23 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
+import com.maya.cbs.ledger.domain.account.entity.AccountBindings;
 import com.maya.cbs.ledger.domain.base.EntryDirection;
 import com.maya.cbs.ledger.domain.base.Money;
-import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
 
-import java.time.LocalDate;
 import java.util.*;
 
-@Value
-public class PostingRule {
+@Getter
+public final class PostingRule {
 
     UUID id;
     String code;
-    int version;
     PostingRuleStatus status;
     PostingRuleSelector selector;
     List<LegTemplate> legs;
 
-    @Builder
-    private PostingRule (UUID id, String code, int version, PostingRuleStatus status,
-                         PostingRuleSelector selector, LocalDate effectiveFrom,
-                         LocalDate effectiveTo, List<LegTemplate> legs) {
-
-        if (version < 1) {
-            throw new IllegalArgumentException("Posting rule version must be at least 1");
-        }
-        if (effectiveTo != null && effectiveTo.isBefore(effectiveFrom)) {
-            throw new IllegalArgumentException("effectiveTo must not be before effectiveFrom");
-        }
+    private PostingRule (UUID id, String code, PostingRuleStatus status,
+                         PostingRuleSelector selector, List<LegTemplate> legs) {
         if (!hasDirection(legs, EntryDirection.DEBIT) ||
             !hasDirection(legs, EntryDirection.CREDIT)) {
             throw new IllegalArgumentException(
@@ -37,15 +26,20 @@ public class PostingRule {
 
         this.id = id;
         this.code = code;
-        this.version = version;
         this.status = status;
         this.selector = selector;
         this.legs = List.copyOf(legs);
     }
 
-    private static boolean hasDirection (List<LegTemplate> legs, EntryDirection direction) {
+    private boolean hasDirection (List<LegTemplate> legs, EntryDirection direction) {
         return legs.stream()
             .anyMatch(leg -> leg.getDirection() == direction);
+    }
+
+    private static PostingRule createPostingRule (UUID id, String code, PostingRuleStatus status,
+                                                  PostingRuleSelector selector,
+                                                  List<LegTemplate> legs) {
+        return new PostingRule(id, code, status, selector, legs);
     }
 
     public boolean isActive () {

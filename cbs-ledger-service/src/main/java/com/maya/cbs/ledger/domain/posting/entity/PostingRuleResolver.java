@@ -1,6 +1,8 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
 import com.maya.cbs.ledger.domain.coa.entity.AccountingContext;
+import com.maya.cbs.ledger.domain.posting.exception.AmbiguousPostingRuleException;
+import com.maya.cbs.ledger.domain.posting.exception.NoPostingRuleFoundException;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class PostingRuleResolver {
         List<PostingRule> matching = candidates.stream()
             .filter(rule -> rule.getStatus() == PostingRuleStatus.ACTIVE)
             .filter(rule -> rule.getSelector()
-                .matches(context.getCustomerSegment()))
+                .matches(context))
             .toList();
 
         if (matching.isEmpty())

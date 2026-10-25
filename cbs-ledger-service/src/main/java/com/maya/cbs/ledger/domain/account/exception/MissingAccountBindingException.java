@@ -1,4 +1,6 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.account.exception;
+
+import com.maya.cbs.ledger.domain.account.entity.AccountRole;
 
 public class MissingAccountBindingException extends RuntimeException {
 

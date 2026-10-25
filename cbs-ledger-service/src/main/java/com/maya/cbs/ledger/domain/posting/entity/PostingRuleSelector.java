@@ -1,14 +1,14 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
 import com.maya.cbs.ledger.domain.base.Currency;
 import com.maya.cbs.ledger.domain.coa.entity.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 @Value
 @Builder
 public class PostingRuleSelector {
 
-    @NonNull
     FinancialMovementType movementType;
     Currency currency;
     CustomerSegment segment;

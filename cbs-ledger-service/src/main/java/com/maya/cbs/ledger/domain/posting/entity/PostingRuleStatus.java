@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
 public enum PostingRuleStatus {
     DRAFT,

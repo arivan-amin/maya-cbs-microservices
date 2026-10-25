@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.exception;
 
 import com.maya.cbs.ledger.domain.coa.entity.AccountingContext;
 

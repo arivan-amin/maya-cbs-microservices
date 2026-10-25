@@ -1,5 +1,6 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.account.entity;
 
+import com.maya.cbs.ledger.domain.account.exception.MissingAccountBindingException;
 import lombok.*;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.maya.cbs.ledger.domain.posting;
+package com.maya.cbs.ledger.domain.posting.entity;
 
 import com.maya.cbs.ledger.domain.base.EntryDirection;
 import com.maya.cbs.ledger.domain.base.Money;
@@ -10,6 +10,6 @@ import java.util.UUID;
 public class ResolvedLeg {
 
     EntryDirection direction;
-    UUID glAccountId;
+    UUID generalLedgerId;
     Money amount;
 }
