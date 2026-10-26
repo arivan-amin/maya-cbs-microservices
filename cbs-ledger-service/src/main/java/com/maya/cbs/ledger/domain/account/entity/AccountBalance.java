@@ -1,59 +1,116 @@
 package com.maya.cbs.ledger.domain.account.entity;
 
 import com.maya.cbs.ledger.domain.account.exception.InsufficientAccountBalanceException;
-import com.maya.cbs.ledger.domain.base.*;
+import com.maya.cbs.ledger.domain.base.Currency;
+import com.maya.cbs.ledger.domain.base.Money;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @ToString
-public class AccountBalance {
+public final class AccountBalance {
 
-    private final String accountId;
-    private Money accountBalance;
-    private Money availableBalance;
+    private final UUID accountId;
+    private final Currency currency;
+    private Money ledgerBalance;
+    private Money heldAmount;
     private Money overdraftLimit;
 
-    public AccountBalance (String accountId, Currency currency) {
+    private AccountBalance (UUID accountId, Currency currency, Money ledgerBalance,
+                            Money heldAmount, Money overdraftLimit) {
         this.accountId = Objects.requireNonNull(accountId, "Account ID cannot be null");
-        accountBalance = Money.zero(currency);
-        availableBalance = Money.zero(currency);
+        this.currency = Objects.requireNonNull(currency, "Currency cannot be null");
+        this.ledgerBalance = requireSameCurrency(ledgerBalance);
+        this.heldAmount = requireNonNegative(requireSameCurrency(heldAmount), "Held amount");
+        this.overdraftLimit =
+            requireNonNegative(requireSameCurrency(overdraftLimit), "Overdraft limit");
     }
 
-    public void applyPostedMovement (Money delta, EntryDirection direction) {
-        if (direction == EntryDirection.CREDIT) {
-            accountBalance = accountBalance.add(delta);
-            availableBalance = availableBalance.add(delta);
+    private Money requireSameCurrency (Money money) {
+        Objects.requireNonNull(money, "Money cannot be null");
+        if (currency != money.getCurrency()) {
+            throw new IllegalArgumentException(
+                "Currency mismatch: expected " + currency + " but was " + money.getCurrency());
         }
-        else {
-            validateSufficientLedger(delta);
-            accountBalance = accountBalance.subtract(delta);
-            availableBalance = availableBalance.subtract(delta);
+        return money;
+    }
+
+    private Money requireNonNegative (Money money, String label) {
+        if (money.isLessThan(Money.zero(currency))) {
+            throw new IllegalArgumentException(label + " cannot be negative");
+        }
+        return money;
+    }
+
+    public static AccountBalance open (UUID accountId, Currency currency) {
+        Objects.requireNonNull(currency, "Currency cannot be null");
+        return new AccountBalance(accountId, currency, Money.zero(currency), Money.zero(currency),
+            Money.zero(currency));
+    }
+
+    public static AccountBalance restore (UUID accountId, Currency currency, Money ledgerBalance,
+                                          Money heldAmount, Money overdraftLimit) {
+        return new AccountBalance(accountId, currency, ledgerBalance, heldAmount, overdraftLimit);
+    }
+
+    public Money availableBalance () {
+        return ledgerBalance.subtract(heldAmount);
+    }
+
+    public Money spendingPower () {
+        return availableBalance().add(overdraftLimit);
+    }
+
+    public boolean canSpend (Money amount) {
+        requirePositiveSameCurrency(amount);
+        return spendingPower().isGreaterThanOrEqual(amount);
+    }
+
+    public boolean isFullySettled () {
+        return ledgerBalance.isZero() && heldAmount.isZero();
+    }
+
+    void increase (Money amount) {
+        requirePositiveSameCurrency(amount);
+        ledgerBalance = ledgerBalance.add(amount);
+    }
+
+    private void requirePositiveSameCurrency (Money amount) {
+        requireSameCurrency(amount);
+        if (!amount.isPositive()) {
+            throw new IllegalArgumentException("Amount must be positive");
         }
     }
 
-    public void validateSufficientLedger (Money delta) {
-        if (!hasSufficientBalance(delta)) {
-            throw new InsufficientAccountBalanceException(accountBalance, delta);
+    void decrease (Money amount) {
+        requireCanSpend(amount);
+        ledgerBalance = ledgerBalance.subtract(amount);
+    }
+
+    void placeHold (Money amount) {
+        requireCanSpend(amount);
+        heldAmount = heldAmount.add(amount);
+    }
+
+    void releaseHold (Money amount) {
+        requirePositiveSameCurrency(amount);
+        if (heldAmount.isLessThan(amount)) {
+            throw new IllegalStateException("Invalid hold on account balance");
         }
+        heldAmount = heldAmount.subtract(amount);
     }
 
-    public boolean hasSufficientBalance (Money amountToCheck) {
-        Objects.requireNonNull(amountToCheck, "Amount to check cannot be null");
-        Money availableFunds = availableBalance.add(overdraftLimit);
-        return availableFunds.isGreaterThanOrEqual(amountToCheck);
+    void changeOverdraftLimit (Money newLimit) {
+        requireNonNegative(requireSameCurrency(newLimit), "Overdraft limit");
+        overdraftLimit = newLimit;
     }
 
-    public void placeHold (Money holdAmount) {
-        if (availableBalance.isLessThan(holdAmount)) {
-            throw new InsufficientAccountBalanceException(availableBalance, holdAmount);
+    private void requireCanSpend (Money amount) {
+        if (!canSpend(amount)) {
+            throw new InsufficientAccountBalanceException(spendingPower(), amount);
         }
-        availableBalance = availableBalance.subtract(holdAmount);
-    }
-
-    public void releaseHold (Money holdAmount) {
-        availableBalance = availableBalance.add(holdAmount);
     }
 }

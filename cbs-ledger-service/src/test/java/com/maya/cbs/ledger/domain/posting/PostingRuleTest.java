@@ -13,26 +13,22 @@ import java.util.UUID;
 @Slf4j
 class PostingRuleTest implements BaseUnitTest {
 
-    private UUID revenueGlId;
-    private UUID feeGlId;
-    private UUID taxGlId;
+    private UUID revenueGeneralLedgerId;
+    private UUID feeGeneralLedgerId;
+    private UUID taxGeneraLedgerId;
 
     @Test
     void _should_when () {
         // given
-        PostingRule rule = PostingRule.builder()
-            .id(UUID.randomUUID())
-            .code("SHOP_PURCHASE_DEFAULT")
-            .status(PostingRuleStatus.ACTIVE)
-            .selector(PostingRuleSelector.builder()
+        PostingRule rule = PostingRule.createPostingRule(UUID.randomUUID(), "SHOP_PURCHASE_DEFAULT",
+            PostingRuleStatus.ACTIVE, PostingRuleSelector.builder()
                 .movementType(FinancialMovementType.SHOP_PURCHASE)
-                .build())
-            .legs(List.of(LegTemplate.debit(AmountComponent.GROSS,
+                .build(), List.of(LegTemplate.debit(AmountComponent.GROSS,
                     new BoundAccount(AccountRole.AGENT_WALLET)),
-                LegTemplate.credit(AmountComponent.PRINCIPAL, new FixedAccount(revenueGlId)),
-                LegTemplate.credit(AmountComponent.FEE, new FixedAccount(feeGlId)),
-                LegTemplate.credit(AmountComponent.TAX, new FixedAccount(taxGlId))))
-            .build();
+                LegTemplate.credit(AmountComponent.PRINCIPAL,
+                    new FixedAccount(revenueGeneralLedgerId)),
+                LegTemplate.credit(AmountComponent.FEE, new FixedAccount(feeGeneralLedgerId)),
+                LegTemplate.credit(AmountComponent.TAX, new FixedAccount(taxGeneraLedgerId))));
 
         // when
 

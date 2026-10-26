@@ -36,7 +36,7 @@ public final class PostingRule {
             .anyMatch(leg -> leg.getDirection() == direction);
     }
 
-    private static PostingRule createPostingRule (UUID id, String code, PostingRuleStatus status,
+    public static PostingRule createPostingRule (UUID id, String code, PostingRuleStatus status,
                                                   PostingRuleSelector selector,
                                                   List<LegTemplate> legs) {
         return new PostingRule(id, code, status, selector, legs);
