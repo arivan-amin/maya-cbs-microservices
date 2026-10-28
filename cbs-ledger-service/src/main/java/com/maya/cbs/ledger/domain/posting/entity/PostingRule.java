@@ -37,8 +37,8 @@ public final class PostingRule {
     }
 
     public static PostingRule createPostingRule (UUID id, String code, PostingRuleStatus status,
-                                                  PostingRuleSelector selector,
-                                                  List<LegTemplate> legs) {
+                                                 PostingRuleSelector selector,
+                                                 List<LegTemplate> legs) {
         return new PostingRule(id, code, status, selector, legs);
     }
 

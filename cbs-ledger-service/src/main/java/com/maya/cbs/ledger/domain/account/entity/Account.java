@@ -2,8 +2,7 @@ package com.maya.cbs.ledger.domain.account.entity;
 
 import com.maya.cbs.ledger.domain.account.exception.*;
 import com.maya.cbs.ledger.domain.base.*;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -12,28 +11,28 @@ import java.util.UUID;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 public final class Account {
 
     private final UUID id;
     private final String accountNumber;
     private final String name;
-    private final AccountType type;
     private final Currency currency;
     private final Instant openedAt;
     private final AccountBalance balance;
+    private final Long version;
     private AccountStatus status;
 
-    private Account (UUID id, String accountNumber, String name, AccountType type,
-                     Currency currency, Instant openedAt, AccountStatus status,
-                     AccountBalance balance) {
+    private Account (UUID id, String accountNumber, String name, Currency currency,
+                     Instant openedAt, AccountStatus status, AccountBalance balance, Long version) {
         this.id = Objects.requireNonNull(id, "Account ID cannot be null");
         this.accountNumber = requireNotBlank(accountNumber, "Account number");
         this.name = requireNotBlank(name, "Account name");
-        this.type = Objects.requireNonNull(type, "Account type cannot be null");
         this.currency = Objects.requireNonNull(currency, "Currency cannot be null");
         this.openedAt = Objects.requireNonNull(openedAt, "Opened-at cannot be null");
         this.status = Objects.requireNonNull(status, "Status cannot be null");
         this.balance = Objects.requireNonNull(balance, "Balance cannot be null");
+        this.version = version;
         requireConsistentBalance(balance);
     }
 
@@ -54,28 +53,35 @@ public final class Account {
         }
     }
 
-    public static Account open (UUID id, String accountNumber, String name, AccountType type,
-                                Currency currency, Clock clock) {
+    public static Account create (UUID id, String accountNumber, String name, Currency currency,
+                                  Clock clock) {
         Objects.requireNonNull(clock, "Clock cannot be null");
-        return new Account(id, accountNumber, name, type, currency, clock.instant(),
-            AccountStatus.ACTIVE, AccountBalance.open(id, currency));
+        return new Account(id, accountNumber, name, currency, clock.instant(), AccountStatus.ACTIVE,
+            AccountBalance.create(id, currency), null);
     }
 
-    public static Account restore (UUID id, String accountNumber, String name, AccountType type,
+    public static Account hydrate (UUID id, String accountNumber, String name,
                                    Currency currency, Instant openedAt, AccountStatus status,
-                                   AccountBalance balance) {
-        return new Account(id, accountNumber, name, type, currency, openedAt, status, balance);
+                                   AccountBalance balance, Long version) {
+        return new Account(id, accountNumber, name, currency, openedAt, status, balance, version);
     }
 
     public void post (Money amount, EntryDirection direction) {
         Objects.requireNonNull(direction, "Direction cannot be null");
-        requireStatusAllows(direction);
-        if (direction == type.getNormalBalanceSide()) {
-            balance.increase(amount);
+        switch (direction) {
+            case CREDIT -> credit(amount);
+            case DEBIT -> debit(amount);
         }
-        else {
-            balance.decrease(amount);
-        }
+    }
+
+    public void credit (Money amount) {
+        requireStatusAllows(EntryDirection.CREDIT);
+        balance.increase(amount);
+    }
+
+    public void debit (Money amount) {
+        requireStatusAllows(EntryDirection.DEBIT);
+        balance.decrease(amount);
     }
 
     private void requireStatusAllows (EntryDirection direction) {
@@ -91,6 +97,11 @@ public final class Account {
 
     public void releaseHold (Money amount) {
         balance.releaseHold(amount);
+    }
+
+    public void captureHold (Money holdAmount, Money captureAmount) {
+        requireStatusAllows(EntryDirection.DEBIT);
+        balance.captureHold(holdAmount, captureAmount);
     }
 
     public void changeOverdraftLimit (Money newLimit) {

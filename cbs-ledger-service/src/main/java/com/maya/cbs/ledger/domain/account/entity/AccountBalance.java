@@ -1,6 +1,7 @@
 package com.maya.cbs.ledger.domain.account.entity;
 
 import com.maya.cbs.ledger.domain.account.exception.InsufficientAccountBalanceException;
+import com.maya.cbs.ledger.domain.account.exception.InvalidHoldReleaseException;
 import com.maya.cbs.ledger.domain.base.Currency;
 import com.maya.cbs.ledger.domain.base.Money;
 import lombok.Getter;
@@ -45,13 +46,13 @@ public final class AccountBalance {
         return money;
     }
 
-    public static AccountBalance open (UUID accountId, Currency currency) {
+    public static AccountBalance create (UUID accountId, Currency currency) {
         Objects.requireNonNull(currency, "Currency cannot be null");
         return new AccountBalance(accountId, currency, Money.zero(currency), Money.zero(currency),
             Money.zero(currency));
     }
 
-    public static AccountBalance restore (UUID accountId, Currency currency, Money ledgerBalance,
+    public static AccountBalance hydrate (UUID accountId, Currency currency, Money ledgerBalance,
                                           Money heldAmount, Money overdraftLimit) {
         return new AccountBalance(accountId, currency, ledgerBalance, heldAmount, overdraftLimit);
     }
@@ -62,6 +63,26 @@ public final class AccountBalance {
 
     public Money spendingPower () {
         return availableBalance().add(overdraftLimit);
+    }
+
+    void captureHold (Money holdAmount, Money captureAmount) {
+        requirePositiveSameCurrency(holdAmount);
+        requirePositiveSameCurrency(captureAmount);
+        if (heldAmount.isLessThan(holdAmount)) {
+            throw new InvalidHoldReleaseException(heldAmount, holdAmount);
+        }
+        if (holdAmount.isLessThan(captureAmount)) {
+            throw new IllegalArgumentException("Capture amount cannot exceed the hold amount");
+        }
+        heldAmount = heldAmount.subtract(holdAmount);
+        ledgerBalance = ledgerBalance.subtract(captureAmount);
+    }
+
+    private void requirePositiveSameCurrency (Money amount) {
+        requireSameCurrency(amount);
+        if (!amount.isPositive()) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
     }
 
     public boolean canSpend (Money amount) {
@@ -76,13 +97,6 @@ public final class AccountBalance {
     void increase (Money amount) {
         requirePositiveSameCurrency(amount);
         ledgerBalance = ledgerBalance.add(amount);
-    }
-
-    private void requirePositiveSameCurrency (Money amount) {
-        requireSameCurrency(amount);
-        if (!amount.isPositive()) {
-            throw new IllegalArgumentException("Amount must be positive");
-        }
     }
 
     void decrease (Money amount) {

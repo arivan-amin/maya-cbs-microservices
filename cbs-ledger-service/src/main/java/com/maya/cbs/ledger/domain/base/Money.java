@@ -45,7 +45,7 @@ public class Money {
     public Money plus (Money plusAmount) {
         return new Money(amount.add(plusAmount.getAmount()), currency);
     }
-    
+
     public Money add (Money other) {
         requireSameCurrency(other);
         return of(amount.add(other.amount), currency);
