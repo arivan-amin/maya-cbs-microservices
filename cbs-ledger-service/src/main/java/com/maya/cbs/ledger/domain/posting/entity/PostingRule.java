@@ -1,11 +1,10 @@
 package com.maya.cbs.ledger.domain.posting.entity;
 
-import com.maya.cbs.ledger.domain.account.entity.AccountBindings;
 import com.maya.cbs.ledger.domain.base.EntryDirection;
-import com.maya.cbs.ledger.domain.base.Money;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public final class PostingRule {
@@ -44,17 +43,5 @@ public final class PostingRule {
 
     public boolean isActive () {
         return status == PostingRuleStatus.ACTIVE;
-    }
-
-    public List<ResolvedLeg> instantiate (AmountBreakdown amounts, AccountBindings bindings) {
-        List<ResolvedLeg> resolvedLegs = new ArrayList<>();
-        for (LegTemplate leg : legs) {
-            Money amount = amounts.get(leg.getAmountComponent());
-            if (amount.isZero()) {
-                continue;
-            }
-            resolvedLegs.add(leg.resolve(amount, bindings));
-        }
-        return List.copyOf(resolvedLegs);
     }
 }

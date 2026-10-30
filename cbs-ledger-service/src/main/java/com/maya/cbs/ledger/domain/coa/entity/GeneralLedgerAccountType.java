@@ -11,7 +11,7 @@ public enum GeneralLedgerAccountType {
     ASSET(1, DEBIT),
     LIABILITY(2, CREDIT),
     EQUITY(3, CREDIT),
-    INCOME(4, CREDIT),
+    REVENUE(4, CREDIT),
     EXPENSE(5, DEBIT);
 
     private final int classDigit;
