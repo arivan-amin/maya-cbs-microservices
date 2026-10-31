@@ -12,9 +12,11 @@ public final class GeneralLedgerAccount {
     private final GeneralLedgerAccountCode code;
     private final UUID parentId;
     private final String name;
+    private final String description;
     private final GeneralLedgerAccountType type;
     private final Currency currency;
     private final boolean postingAllowed;
+    private final boolean controlAccount;
     private final Long version;
-    private GeneralLedgerAccountStatus status;
+    private final GeneralLedgerAccountStatus status;
 }
