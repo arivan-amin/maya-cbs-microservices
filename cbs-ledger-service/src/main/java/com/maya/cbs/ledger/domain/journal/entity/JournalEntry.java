@@ -16,21 +16,19 @@ import java.util.UUID;
 public final class JournalEntry {
 
     private UUID id;
-    private UUID journalId;
     private Instant timestamp;
     private LocalDate postingDate;
-    private JournalStatus status;
     private String referenceId;
+    private String idempotencyKey;
     private String description;
     private UUID reversalOf;
     private List<JournalEntryLine> lines;
 
-    public static JournalEntry of (UUID id, UUID journalId, Instant timestamp,
-                                   LocalDate postingDate, JournalStatus status, String referenceId,
-                                   String description, UUID reversalOf,
-                                   List<JournalEntryLine> lines) {
+    public static JournalEntry of (UUID id, Instant timestamp, LocalDate postingDate,
+                                   String referenceId, String idempotencyKey, String description,
+                                   UUID reversalOf, List<JournalEntryLine> lines) {
         validate(lines);
-        return new JournalEntry(id, journalId, timestamp, postingDate, status, referenceId,
+        return new JournalEntry(id, timestamp, postingDate, referenceId, idempotencyKey,
             description, reversalOf, lines);
     }
 

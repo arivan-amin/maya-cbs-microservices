@@ -14,6 +14,8 @@ public class JournalEntryLine {
     private UUID id;
     private UUID journalEntryId;
     private UUID glAccountId;
+    private UUID customerAccountId;
     private EntryDirection direction;
     private Money money;
+    private UUID productId;
 }

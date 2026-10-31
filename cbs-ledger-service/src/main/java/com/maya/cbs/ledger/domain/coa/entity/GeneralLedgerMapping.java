@@ -1,6 +1,7 @@
 package com.maya.cbs.ledger.domain.coa.entity;
 
 import com.maya.cbs.ledger.domain.base.Currency;
+import com.maya.cbs.ledger.domain.transaction.entity.TransactionType;
 import lombok.*;
 
 import java.util.UUID;
@@ -12,7 +13,7 @@ import java.util.UUID;
 public class GeneralLedgerMapping {
 
     private UUID id;
-    private FinancialMovementType type;
+    private TransactionType transactionType;
     private Currency currency;
     private CustomerSegment customerSegment;
     private UUID debitGeneralLedgerAccount;

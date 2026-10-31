@@ -15,7 +15,6 @@ public final class Account {
     private final UUID glAccountId;
     private final Currency currency;
     private final Instant openedAt;
-    private final AccountBalance balance;
     private final Long version;
     private AccountStatus status;
 }
